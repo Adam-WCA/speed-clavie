@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Clavier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            padding: 20px;
+        }
+        .game-container {
+            margin-top: 50px;
+        }
+        .points {
+            font-size: 30px;
+            margin: 20px;
+        }
+        .input-area {
+            width: 100%;
+            padding: 10px;
+            font-size: 20px;
+            text-align: center;
+        }
+        .random-word {
+            font-size: 30px;
+            margin: 20px;
+            font-weight: bold;
+        }
+        .start-button {
+            padding: 15px;
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .start-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>لعبة Speed Clavier</h1>
+    <p>اضغط على "Start" لبدء الكتابة. كلما كتبت أسرع، كلما زادت النقاط!</p>
+
+    <div class="game-container">
+        <button class="start-button" id="startButton">Start</button>
+        <div class="random-word" id="randomWord"></div>
+        <textarea id="input-area" class="input-area" placeholder="ابدأ الكتابة هنا..." disabled></textarea>
+        <div class="points">النقاط: <span id="points">0</span></div>
+    </div>
+
+    <script>
+        let points = 0; // النقاط المبدئية
+        let startTime, endTime;
+        let isStarted = false;
+
+        // الكلمات العشوائية
+        const randomWords = [
+            "tomato", "sofa", "apple", "book", "table", "phone", "car", "tree", "school", "computer"
+        ];
+
+        // الحصول على العناصر
+        const pointsElement = document.getElementById('points');
+        const inputArea = document.getElementById('input-area');
+        const randomWordElement = document.getElementById('randomWord');
+        const startButton = document.getElementById('startButton');
+
+        // دالة لاختيار كلمة عشوائية
+        function getRandomWord() {
+            const randomIndex = Math.floor(Math.random() * randomWords.length);
+            return randomWords[randomIndex];
+        }
+
+        // دالة لبدء اللعبة
+        function startGame() {
+            points = 0;
+            pointsElement.textContent = points;
+            inputArea.value = "";
+            inputArea.disabled = false;
+            inputArea.focus();
+            randomWordElement.textContent = getRandomWord();
+            startTime = new Date().getTime(); // بدأ التوقيت
+            isStarted = true;
+        }
+
+        // حساب النقاط بناءً على السرعة
+        function calculatePoints() {
+            if (!isStarted) return;
+            endTime = new Date().getTime();
+            const timeTaken = (endTime - startTime) / 1000; // الوقت بالثواني
+            const length = inputArea.value.length;
+            points = Math.round(length / timeTaken * 10); // زيادة النقاط حسب السرعة
+            pointsElement.textContent = points;
+        }
+
+        // حدث الكتابة
+        inputArea.addEventListener('input', function() {
+            if (inputArea.value === randomWordElement.textContent) {
+                calculatePoints();
+            }
+        });
+
+        // بدء اللعبة عند الضغط على زر start
+        startButton.addEventListener('click', function() {
+            startGame();
+        });
+    </script>
+
+</body>
+</html>
